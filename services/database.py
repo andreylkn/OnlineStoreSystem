@@ -1,9 +1,20 @@
 import sqlite3
 
+# Constants for a user table
+ROLE = 'role'
+USER_ID = 'id'
+USERNAME = 'username'
+PASSWORD = 'password'
+
 class DatabaseService:
     def __init__(self, db_name="store.db"):
         self._connection = sqlite3.connect(db_name)
+        self._connection.row_factory = sqlite3.Row
         self._initialize_tables()
+
+    @property
+    def connection(self):
+        return self._connection
 
     def _initialize_tables(self):
         cursor = self._connection.cursor()
@@ -22,7 +33,7 @@ class DatabaseService:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT UNIQUE,
                 password TEXT,
-                role TINYINT NOT NULL
+                role INTEGER
             )
         """)
 
