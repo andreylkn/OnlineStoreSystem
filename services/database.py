@@ -6,6 +6,14 @@ USER_ID = 'id'
 USERNAME = 'username'
 PASSWORD = 'password'
 
+# Constants for categories and products
+PRODUCT_ID = 'id'
+NAME = 'name'
+DESCRIPTION = 'description'
+CATEGORY = 'category'
+PRICE = 'price'
+DISCOUNT = 'discount'
+
 class DatabaseService:
     def __init__(self, db_name="store.db"):
         self._connection = sqlite3.connect(db_name)
@@ -17,11 +25,13 @@ class DatabaseService:
         return self._connection
 
     def _initialize_tables(self):
-        cursor = self._connection.cursor()
-        self._create_tables(cursor)
+        self._create_tables()
+        if self._is_empty():
+            self._seed_test_data()
         self._connection.commit()
 
-    def _create_tables(self, cursor):
+    def _create_tables(self):
+        cursor = self._connection.cursor()
         self._create_users_table(cursor)
         self._create_categories_table(cursor)
         self._create_products_table(cursor)
@@ -70,3 +80,57 @@ class DatabaseService:
                 FOREIGN KEY(product_id) REFERENCES products(id)
             )
         """)
+
+    def _is_empty(self):
+        """Checks if the categories table is empty."""
+        cursor = self._connection.cursor()
+        cursor.execute("SELECT COUNT(*) FROM categories")
+        count = cursor.fetchone()[0]
+        return count == 0
+
+    def _seed_test_data(self):
+        cursor = self._connection.cursor()
+        self._seed_categories_data(cursor)
+        self._seed_products_data(cursor)
+
+    def _seed_categories_data(self, cursor):
+        # Insert test categories
+        categories = [
+            {NAME: 'Electronics', DESCRIPTION: 'Electronic gadgets and devices'},
+            {NAME: 'Books', DESCRIPTION: 'Various kinds of books'},
+            {NAME: 'Clothing', DESCRIPTION: 'Men and Women Clothing'},
+        ]
+
+        for cat in categories:
+            cursor.execute(
+                "INSERT INTO categories (name, description) VALUES (?, ?)",
+                (cat[NAME], cat[DESCRIPTION])
+            )
+        self._connection.commit()
+
+    def _seed_products_data(self, cursor):
+        # Retrieve category IDs for mapping
+        cursor.execute("SELECT id, name FROM categories")
+        cat_mapping = {row[NAME]: row[PRODUCT_ID] for row in cursor.fetchall()}
+
+        # Insert test products
+        products = [
+            {CATEGORY: 'Electronics', NAME: 'Smartphone', PRICE: 699.99, DESCRIPTION: 'Latest smartphone with advanced features', DISCOUNT: 10.0},
+            {CATEGORY: 'Electronics', NAME: 'Laptop', PRICE: 999.99, DESCRIPTION: 'High performance laptop for professionals', DISCOUNT: 15.0},
+            {CATEGORY: 'Electronics', NAME: 'Headphones', PRICE: 199.99, DESCRIPTION: 'Noise-cancelling over-ear headphones', DISCOUNT: 5.0},
+            {CATEGORY: 'Books', NAME: 'Novel', PRICE: 19.99, DESCRIPTION: 'A captivating fictional story', DISCOUNT: 0.0},
+            {CATEGORY: 'Books', NAME: 'Biography', PRICE: 24.99, DESCRIPTION: 'An inspiring life story', DISCOUNT: 0.0},
+            {CATEGORY: 'Books', NAME: 'Science Fiction', PRICE: 29.99, DESCRIPTION: 'Futuristic sci-fi adventure', DISCOUNT: 10.0},
+            {CATEGORY: 'Clothing', NAME: 'T-Shirt', PRICE: 9.99, DESCRIPTION: 'Comfortable cotton t-shirt', DISCOUNT: 0.0},
+            {CATEGORY: 'Clothing', NAME: 'Jeans', PRICE: 49.99, DESCRIPTION: 'Stylish denim jeans', DISCOUNT: 20.0},
+            {CATEGORY: 'Clothing', NAME: 'Jacket', PRICE: 79.99, DESCRIPTION: 'Warm and trendy jacket', DISCOUNT: 15.0},
+        ]
+
+        for prod in products:
+            category_id = cat_mapping.get(prod[CATEGORY])
+            if category_id:
+                cursor.execute(
+                    "INSERT INTO products (category_id, name, price, description, discount) VALUES (?, ?, ?, ?, ?)",
+                    (category_id, prod[NAME], prod[PRICE], prod[DESCRIPTION], prod[DISCOUNT])
+                )
+        self._connection.commit()
