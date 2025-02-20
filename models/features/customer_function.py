@@ -1,8 +1,3 @@
-# view list of categories, all products, products by category
-# view the contents of the shopping cart
-# placing products in the shopping cart
-# delete products from the shopping cart
-# make a purchase of the contents of the shopping cart
 """ 1. view list of categories, all products, products by category
     2. view the products
     3. placing products in the shopping cart
@@ -29,10 +24,6 @@ class CustomerFeatures:
         try:
             cursor.execute("SELECT * FROM categories")
             if categories := cursor.fetchall():
-                # car_list = [Car(*row) for row in cars]  # Convert each row to a Car object
-
-                for cat in categories:
-                    print({cat['name']: cat['description']})
                 Categories(row[0] for row in categories)
                 print_categories_menu()
                 Categories(categories).display_categories()
