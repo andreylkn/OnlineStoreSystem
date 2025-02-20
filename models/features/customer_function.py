@@ -89,7 +89,8 @@ class CustomerFeatures:
             sql = "DELETE FROM shopping_cart WHERE id = ?"
             cursor.execute(sql, (cart_id,))
             self._db.connection.commit()
-            return f"Product _D:{cart_id}, deleted successfully!"
+            print(f"Cart ID:{cart_id}, deleted successfully!")
+            return True
         except Exception as e:
             return f"Error: {e}"
         finally:

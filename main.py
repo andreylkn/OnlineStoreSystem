@@ -92,7 +92,8 @@ def redirect_to_view_cart(user):
                           "Enter 0 to return to the Categories Menu: "))
 
         if selected_ID != 0:
-            cust_features.delete_product_in_cart(selected_ID)
+            if cust_features.delete_product_in_cart(selected_ID):
+                redirect_to_view_cart(user)
         elif selected_ID == str:
             print_invalid_choice()
         else:
