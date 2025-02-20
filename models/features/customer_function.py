@@ -20,7 +20,7 @@ class CustomerFeatures:
         self._db = DatabaseService()
 
     # View list of categories
-    def view_categories(self):
+    def view_categ(self):
         cursor = self._db.connection.cursor()
         try:
             cursor.execute("SELECT * FROM categories")
@@ -51,7 +51,7 @@ class CustomerFeatures:
             cursor.close()
 
     # View the products based on the selected categories
-    def view_products_from_cat(self, category_id):
+    def view_products_from_categ(self, category_id):
         cursor = self._db.connection.cursor()
         try:
             sql = "SELECT * FROM products WHERE category_id = ?"
@@ -105,7 +105,7 @@ class CustomerFeatures:
             cursor.close()
 
     # Delete selected cart_id from the shopping cart
-    def delete_product_in_cart(self, cart_id):
+    def del_prod_in_cart(self, cart_id):
         cursor = self._db.connection.cursor()
         try:
             sql = "DELETE FROM shopping_cart WHERE id = ?"

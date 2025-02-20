@@ -44,34 +44,34 @@ def validate_admin_cus_role(user):
         choice = input("Choose an option: ").strip()
         if choice == '1':
             # View Categories List
-            redirect_to_view_categories(user)
+            view_categ_redirect(user)
         if choice == '2':
             # View Products
-            redirect_to_view_products(user)
+            view_products_redirect(user)
         if choice == '3':
             # View Shopping Cart
-            redirect_to_view_cart(user)
+            view_cart_redirect(user)
         else:
             print_invalid_choice()
 
 
 # View Categories
-def redirect_to_view_categories(user):
-    if categories_list := cust_features.view_categories():
+def view_categ_redirect(user):
+    if categories_list := cust_features.view_categ():
         selection = int(input("Enter Category ID to view available products, \n\t\t\t\tOR\n"
                               "Enter 0 to return to the Customer Menu: "))
         if selection != 0:
             categories = Categories(categories_list)
             categories.find_selected_category(selection)
-            redirect_to_view_prod_from_selected_cat(user, selection)
+            view_selected_categ_prod(user, selection)
         else:
             # 0 Back to the Customer Menu
             validate_admin_cus_role(user)
 
 
 # View Products
-def redirect_to_view_prod_from_selected_cat(user, selected_category):
-    if product_list := cust_features.view_products_from_cat(selected_category):
+def view_selected_categ_prod(user, selected_category):
+    if product_list := cust_features.view_products_from_categ(selected_category):
         selection = int(input("Enter Product ID to to add it to your cart, \n\t\t\t\tOR\n"
                               "Enter 0 to return to the Categories Menu: "))
         if selection != 0:
@@ -79,27 +79,27 @@ def redirect_to_view_prod_from_selected_cat(user, selected_category):
             product = Products(product_list)
             product.find_selected_product(selection)
             cust_features.add_to_cart(selection, quantity)
-            redirect_to_view_cart(user)
+            view_cart_redirect(user)
         else:
-            redirect_to_view_categories(user)
+            view_categ_redirect(user)
 
 
 # View Cart
-def redirect_to_view_cart(user):
+def view_cart_redirect(user):
     if cust_features.view_cart(Customer._current_user_id):
         selected_ID = int(input("Enter the selected Cart ID to remove the product from your cart, \n\t\t\t\tOR\n"
                           "Enter 0 to return to the Categories Menu: "))
         if selected_ID != 0:
-            if cust_features.delete_product_in_cart(selected_ID):
-                redirect_to_view_cart(user)
+            if cust_features.del_prod_in_cart(selected_ID):
+                view_cart_redirect(user)
         elif selected_ID == str:
             print_invalid_choice()
         else:
-            redirect_to_view_categories(user)
+            view_categ_redirect(user)
 
 
 # View Products
-def redirect_to_view_products(user):
+def view_products_redirect(user):
     if product_list := cust_features.view_all_products():
         selection = int(input("Enter Product ID to to add it to your cart, \n\t\t\t\tOR\n"
                               "Enter 0 to return to the Categories Menu: "))
@@ -108,9 +108,9 @@ def redirect_to_view_products(user):
             product = Products(product_list)
             product.find_selected_product(selection)
             cust_features.add_to_cart(selection, quantity)
-            redirect_to_view_cart(user)
+            view_cart_redirect(user)
         else:
-            redirect_to_view_categories(user)
+            view_categ_redirect(user)
 
 if __name__ == "__main__":
     main()
