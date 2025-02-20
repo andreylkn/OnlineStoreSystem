@@ -6,10 +6,11 @@ from models.features.customer_function import CustomerFeatures
 from models.products.category import Categories
 from models.products.product import Products
 
+cust_features = CustomerFeatures()
+
+
 def main():
     auth_service = AuthorizationService()
-    cust_features = CustomerFeatures()
-
     current_user = None
 
     while True:
@@ -25,38 +26,77 @@ def main():
                 break
             else:
                 print_invalid_choice()
-            if type(current_user) is Admin:
-                print_admin_menu()
-                choice = input("Choose an option: ").strip()
-                if choice == '1':
-                    current_user = None
-                else:
-                    print_invalid_choice()
-            elif type(current_user) is Customer:
-                print_customer_menu()
-                choice = input("Choose an option: ").strip()
-                if choice == '1':
-                    if categories_list := cust_features.view_categories():
-                        # 20/2 implement press 0 to go back Customer Menu
-                        selected_category = int(input("Choose a category from the table above to see available "
-                                                      "products: "))
-                        categories = Categories(categories_list)
-                        categories.find_selected_category(selected_category)
 
-                        # Option to make a purchase or back to Customer Menu
-                        if product_list := cust_features.view_products(selected_category):
-                            selected_product = int(input("Enter the product ID to add it to your cart: "))
-                            quantity = int(input("Enter the quantity: "))
-                            product = Products(product_list)
-                            product.find_selected_product(selected_product)
-                            cust_features.add_to_cart(selected_product, quantity)
-                            cust_features.view_cart(Customer._current_user_id)
-                    break
-                if choice == '2':
-                    # View Shopping Cart
-                    cust_features.view_cart(Customer._current_user_id)
-                else:
-                    print_invalid_choice()
+            validate_admin_cus_role(current_user)
+
+
+def validate_admin_cus_role(user):
+    # To verify the role and display the appropriate role function
+    if type(user) is Admin:
+        print_admin_menu()
+        choice = input("Choose an option: ").strip()
+        if choice == '1':
+            print("Will be available soon.")
+        else:
+            print_invalid_choice()
+    elif type(user) is Customer:
+        print_customer_menu()
+        choice = input("Choose an option: ").strip()
+        if choice == '1':
+            # View Categories List
+            redirect_to_view_categories(user)
+        if choice == '2':
+            # View Shopping Cart
+            redirect_to_view_cart(user)
+        else:
+            print_invalid_choice()
+
+
+def redirect_to_view_categories(user):
+    # View Categories
+    if categories_list := cust_features.view_categories():
+
+        selection = int(input("Enter Category ID to view available products, \n\t\t\t\tOR\n"
+                              "Enter 0 to return to the Customer Menu: "))
+
+        if selection != 0:
+            categories = Categories(categories_list)
+            categories.find_selected_category(selection)
+            redirect_to_view_products(user, selection)
+        else:
+            # 0 Back to the Customer Menu
+            validate_admin_cus_role(user)
+
+
+def redirect_to_view_products(user, selected_category):
+    # View Products
+    if product_list := cust_features.view_products(selected_category):
+
+        selection = int(input("Enter Product ID to to add it to your cart, \n\t\t\t\tOR\n"
+                              "Enter 0 to return to the Categories Menu: "))
+
+        if selection != 0:
+            quantity = int(input("Enter the quantity: "))
+            product = Products(product_list)
+            product.find_selected_product(selection)
+            cust_features.add_to_cart(selection, quantity)
+            redirect_to_view_cart(user)
+
+        else:
+            redirect_to_view_categories(user)
+
+
+def redirect_to_view_cart(user):
+    if cust_features.view_cart(Customer._current_user_id):
+        selected_ID = int(input("Enter the selected Cart ID to remove the product from your cart, \n\t\t\t\tOR\n"
+                          "Enter 0 to return to the Categories Menu: "))
+
+        if selected_ID != 0:
+            cust_features.delete_product_in_cart(selected_ID)
+        elif selected_ID == str:
+            print_invalid_choice()
+        else:
+            redirect_to_view_categories(user)
 
 
 if __name__ == "__main__":

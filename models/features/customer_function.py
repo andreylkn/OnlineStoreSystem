@@ -83,13 +83,13 @@ class CustomerFeatures:
         finally:
             cursor.close()
 
-    def delete_product_in_cart(self, product_id):
+    def delete_product_in_cart(self, cart_id):
         cursor = self._db.connection.cursor()
         try:
-            sql = "DELETE FROM shopping_cart WHERE product_id = ?"
-            cursor.execute(sql, (product_id,))
+            sql = "DELETE FROM shopping_cart WHERE id = ?"
+            cursor.execute(sql, (cart_id,))
             self._db.connection.commit()
-            return f"Product _D:{product_id}, deleted successfully!"
+            return f"Product _D:{cart_id}, deleted successfully!"
         except Exception as e:
             return f"Error: {e}"
         finally:
