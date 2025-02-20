@@ -13,8 +13,9 @@ def print_admin_menu():
 def print_customer_menu():
     print("\n------------------- Customer Menu ----------------------")
     print("1. View Categories")
-    print("2. View Shopping Cart")
-    print("3. Logout")
+    print("2. View Products")
+    print("3. View Shopping Cart")
+    print("4. Logout")
 
 
 def print_categories_menu():

@@ -19,6 +19,7 @@ class CustomerFeatures:
     def __init__(self):
         self._db = DatabaseService()
 
+    # View list of categories
     def view_categories(self):
         cursor = self._db.connection.cursor()
         try:
@@ -35,16 +36,28 @@ class CustomerFeatures:
         finally:
             cursor.close()
 
-    def view_products(self, category_id):
+    # View list of products
+    def view_all_products(self):
+        cursor = self._db.connection.cursor()
+        try:
+            cursor.execute("SELECT * FROM products")
+            if products := cursor.fetchall():
+                return self.insert_to_cls_prod(products)
+            else:
+                print("No categories available.")
+        except Exception as e:
+            return f"Error: {e}"
+        finally:
+            cursor.close()
+
+    # View the products based on the selected categories
+    def view_products_from_cat(self, category_id):
         cursor = self._db.connection.cursor()
         try:
             sql = "SELECT * FROM products WHERE category_id = ?"
             cursor.execute(sql, (category_id,))
             if products := cursor.fetchall():
-                Products(row[0] for row in products)
-                print_products_menu()
-                Products(products).display_products()
-                return products
+                return self.insert_to_cls_prod(products)
             else:
                 print("No products available.")
         except Exception as e:
@@ -52,6 +65,13 @@ class CustomerFeatures:
         finally:
             cursor.close()
 
+    def insert_to_cls_prod(self, products):
+        Products(row[0] for row in products)
+        print_products_menu()
+        Products(products).display_products()
+        return products
+
+    # Placing product in the shopping cart
     def add_to_cart(self, product_id, quantity):
         cursor = self._db.connection.cursor()
         try:
@@ -65,6 +85,7 @@ class CustomerFeatures:
         finally:
             cursor.close()
 
+    # View contents of the shopping cart
     def view_cart(self, user_id):
         cursor = self._db.connection.cursor()
         try:
@@ -83,6 +104,7 @@ class CustomerFeatures:
         finally:
             cursor.close()
 
+    # Delete selected cart_id from the shopping cart
     def delete_product_in_cart(self, cart_id):
         cursor = self._db.connection.cursor()
         try:
