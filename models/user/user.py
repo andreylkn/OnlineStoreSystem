@@ -20,7 +20,7 @@ class User:
         return self._category_manager.show_all_category()
 
     def view_all_products(self):
-        self._product_manager.show_products()
+        return self._product_manager.show_products()
 
     def view_products_by_category(self, category_id):
-        self._product_manager.show_products_by_category(category_id)
+        return self._product_manager.show_products_by_category(category_id)
