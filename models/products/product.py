@@ -6,13 +6,6 @@ class Products:
     def __init__(self, product_list):
         self._product_list = product_list
 
-    def display_products(self):
-        table = PrettyTable()
-        table.field_names = ["Product ID", "Category ID", "Name", "Price", "Description", "Discount"]
-        for product in self._product_list:
-            table.add_row(product)
-        print(table)
-
     def get_product_ids(self):
         return [product[0] for product in self._product_list]
 

@@ -7,7 +7,16 @@ def print_guest_menu():
 
 def print_admin_menu():
     print("\n--------------------- Admin Menu -----------------------")
-    print("1. Logout")
+    print("1. Add Category")
+    print("2. Update Category")
+    print("3. Delete Category")
+    print("4. View Categories")
+    print("5. Add Product")
+    print("6. Update Product")
+    print("7. Delete Product")
+    print("8. View All Products")
+    print("9. View Products by Category")
+    print("0. Logout")
 
 
 def print_customer_menu():

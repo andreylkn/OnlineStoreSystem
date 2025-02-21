@@ -1,5 +1,3 @@
-from prettytable import PrettyTable
-
 
 class Categories:
 
@@ -17,13 +15,6 @@ class Categories:
     @property
     def cats_description(self):
         return self._cats_description"""
-
-    def display_categories(self):
-        table = PrettyTable()
-        table.field_names = ["Number", "Category", "Description"]
-        for category in self._category_list:
-            table.add_row(category)
-        print(table)
 
     def get_category_ids(self):
         return [category[0] for category in self._category_list]

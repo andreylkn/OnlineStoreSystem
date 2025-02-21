@@ -15,10 +15,22 @@ PRICE = 'price'
 DISCOUNT = 'discount'
 
 class DatabaseService:
+    _instance = None
+
+    def __new__(cls):
+        #Singleton
+        if cls._instance is None:
+            cls._instance = super(DatabaseService, cls).__new__(cls)
+        return cls._instance
+
     def __init__(self, db_name="store.db"):
+        # To avoid reinitializing,
+        if hasattr(self, "_initialized") and self._initialized:
+            return
         self._connection = sqlite3.connect(db_name)
         self._connection.row_factory = sqlite3.Row
         self._initialize_tables()
+        self._initialized = True
 
     @property
     def connection(self):
