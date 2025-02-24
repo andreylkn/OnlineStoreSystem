@@ -48,6 +48,7 @@ class DatabaseService:
         self._create_categories_table(cursor)
         self._create_products_table(cursor)
         self._create_shopping_cart_table(cursor)
+        self._create_sales_table(cursor)
 
     def _create_users_table(self, cursor):
         cursor.execute("""
@@ -88,6 +89,19 @@ class DatabaseService:
                 user_id INTEGER,
                 product_id INTEGER,
                 quantity INTEGER,
+                FOREIGN KEY(user_id) REFERENCES users(id),
+                FOREIGN KEY(product_id) REFERENCES products(id)
+            )
+        """)
+
+    def _create_sales_table(self, cursor):
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS sales (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                product_id INTEGER,
+                quantity INTEGER,
+                date TEXT,
                 FOREIGN KEY(user_id) REFERENCES users(id),
                 FOREIGN KEY(product_id) REFERENCES products(id)
             )
