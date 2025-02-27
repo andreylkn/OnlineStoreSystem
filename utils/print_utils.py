@@ -16,6 +16,8 @@ def print_admin_menu():
     print("7. Delete Product")
     print("8. View All Products")
     print("9. View Products by Category")
+    print("10. Print Sales Report")
+    print("11. Export Sales Report to PDF")
     print("0. Logout")
 
 

@@ -2,6 +2,7 @@ from managers.base_manager import BaseManager
 from prettytable import PrettyTable
 import sqlite3
 
+TABLE_HEADERS = ["Number", "Category", "Description"]
 
 class CategoryManager(BaseManager):
     def add_category(self, name, description):
@@ -37,7 +38,7 @@ class CategoryManager(BaseManager):
 
     def show_all_category(self):
         table = PrettyTable()
-        table.field_names = ["Number", "Category", "Description"]
+        table.field_names = TABLE_HEADERS
         if categories := self.get_categories():
             for category in categories:
                 table.add_row(category)

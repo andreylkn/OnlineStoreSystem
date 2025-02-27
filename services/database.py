@@ -14,6 +14,13 @@ CATEGORY = 'category'
 PRICE = 'price'
 DISCOUNT = 'discount'
 
+# Constants for the shopping cart table
+QUANTITY = 'quantity'
+EFFECTIVE_PRICE = 'effective_price'
+
+# Constants for the sale table
+SALE_DATE = 'sale_date'
+
 class DatabaseService:
     _instance = None
 
@@ -101,7 +108,8 @@ class DatabaseService:
                 user_id INTEGER,
                 product_id INTEGER,
                 quantity INTEGER,
-                date TEXT,
+                effective_price REAL,
+                sale_date TEXT,
                 FOREIGN KEY(user_id) REFERENCES users(id),
                 FOREIGN KEY(product_id) REFERENCES products(id)
             )

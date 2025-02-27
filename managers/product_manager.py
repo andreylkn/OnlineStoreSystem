@@ -3,6 +3,7 @@ from utils.print_utils import print_products_menu
 from managers.base_manager import BaseManager
 import sqlite3
 
+TABLE_HEADERS = ["Product ID", "Category ID", "Name", "Price", "Description", "Discount"]
 
 class ProductManager(BaseManager):
     def add_product(self, category_id, name, price, description, discount):
@@ -38,7 +39,7 @@ class ProductManager(BaseManager):
 
     def show_products(self):
         table = PrettyTable()
-        table.field_names = ["Product ID", "Category ID", "Name", "Price", "Description", "Discount"]
+        table.field_names = TABLE_HEADERS
         if products := self.get_products():
             for product in products:
                 table.add_row(product)
@@ -54,7 +55,7 @@ class ProductManager(BaseManager):
 
     def show_products_by_category(self, category_id):
         table = PrettyTable()
-        table.field_names = ["Product ID", "Category ID", "Name", "Price", "Description", "Discount"]
+        table.field_names = TABLE_HEADERS
         if products := self.get_products_by_category(category_id):
             for product in products:
                 table.add_row(product)

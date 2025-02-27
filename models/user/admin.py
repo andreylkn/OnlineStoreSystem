@@ -1,9 +1,11 @@
+from managers.sale_report_manager import SaleReportManager
 from models.user.user import User
 
 
 class Admin(User):
     def __init__(self, user_id, username):
         super().__init__(user_id, username)
+        self._sale_report_manager = SaleReportManager()
 
     def add_category(self):
         name = input("Enter category name: ")
@@ -76,7 +78,8 @@ class Admin(User):
         else:
             print("Product not found.")
 
+    def print_sales_report(self):
+        self._sale_report_manager.print_report()
 
-"""    def view_products_by_category(self):
-        category_id = input("Enter category ID: ")
-        super().view_products_by_category(category_id)"""
+    def export_sales_report(self):
+        self._sale_report_manager.export_report()

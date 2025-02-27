@@ -5,7 +5,6 @@ from utils.print_utils import print_cart_menu, print_products_menu, print_catego
 
 class Customer(User):
     def __init__(self, user_id, username):
-        self._db = DatabaseService()
         super().__init__(user_id, username)
 
     # View list of categories
@@ -21,7 +20,7 @@ class Customer(User):
     # View contents of the shopping cart
     def view_cart(self):
         print_cart_menu()
-        return self._cart_manager.show_carts(self.id)
+        return self._cart_manager.show_cart_items(self.id)
 
     # Placing product in the shopping cart
     def add_to_cart(self):
@@ -32,9 +31,8 @@ class Customer(User):
     # Delete selected cart_id from the shopping cart
     def del_prod_in_cart(self):
         cart_id = input("Enter Cart ID to remove the product from your cart: ")
-        return self._cart_manager.del_cart(cart_id)
+        return self._cart_manager.del_cart_item(cart_id)
 
     # To make a purchase (Everything in Carts)
-    def make_a_purchase(self):
-        carts = self._cart_manager.get_carts(self.id)
-        return self._cart_manager.to_purchase(self.id, carts)
+    def make_purchase(self):
+        self._cart_manager.make_purchase(self.id)
