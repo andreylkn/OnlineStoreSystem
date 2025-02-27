@@ -1,6 +1,7 @@
 from managers.base_manager import BaseManager
 from prettytable import PrettyTable
-from dbm import sqlite3
+import sqlite3
+
 
 class CategoryManager(BaseManager):
     def add_category(self, name, description):

@@ -2,8 +2,6 @@ from models.user.admin import Admin
 from models.user.customer import Customer
 from services.authorization_service import AuthorizationService
 from utils.print_utils import print_guest_menu, print_invalid_choice, print_admin_menu, print_customer_menu
-from models.products.category import Categories
-from models.products.product import Products
 
 
 def main():
@@ -25,6 +23,7 @@ def main():
                 print_invalid_choice()
         else:
             validate_admin_cus_role(current_user)
+
 
 # To verify the role and display the appropriate role function
 def validate_admin_cus_role(user):
@@ -57,73 +56,26 @@ def validate_admin_cus_role(user):
         print_customer_menu()
         choice = input("Choose an option: ").strip()
         if choice == '1':
-            # View Categories List
-            view_categ_redirect(user)
+            user.view_all_categories()  # View Category List
         elif choice == '2':
-            # View Products
-            view_products_redirect(user)
+            user.view_all_products()  # View All Products
         elif choice == '3':
-            # View Shopping Cart
-            view_cart_redirect(user)
+            user.view_products_by_category()  # View Products by Category
+        elif choice == '4':
+            user.view_cart()   # View Shopping Cart
+        elif choice == '5':
+            user.add_to_cart()  # Add Product in Cart
+        elif choice == '6':
+            user.del_prod_in_cart()  # Delete products from the shopping cart
+        elif choice == '7':
+            user.make_a_purchase()  # Make a Purchase
+        elif choice == '8':
+            print("Not Ready")  # Apply Discount and Calculate total cost
+        elif choice == "0":
+            print("Logging out...")
         else:
             print_invalid_choice()
 
-
-# View Categories
-def view_categ_redirect(user):
-    if categories_list := user.view_all_categories():
-        selection = int(input("Enter Category ID to view available products, \n\t\t\t\tOR\n"
-                              "Enter 0 to return to the Customer Menu: "))
-        if selection != 0:
-            categories = Categories(categories_list)
-            categories.find_selected_category(selection)
-            view_selected_categ_prod(user, selection)
-        else:
-            # 0 Back to the Customer Menu
-            validate_admin_cus_role(user)
-
-
-# View Products
-def view_selected_categ_prod(user, selected_category):
-    if product_list := user.view_products_from_categ(selected_category):
-        selection = int(input("Enter Product ID to to add it to your cart, \n\t\t\t\tOR\n"
-                              "Enter 0 to return to the Categories Menu: "))
-        if selection != 0:
-            quantity = int(input("Enter the quantity: "))
-            product = Products(product_list)
-            product.find_selected_product(selection)
-            user.add_to_cart(selection, quantity)
-            view_cart_redirect(user)
-        else:
-            view_categ_redirect(user)
-
-# View Cart
-def view_cart_redirect(user):
-    if user.view_cart():
-        selected_ID = int(input("Enter the selected Cart ID to remove the product from your cart, \n\t\t\t\tOR\n"
-                          "Enter 0 to return to the Categories Menu: "))
-        if selected_ID != 0:
-            if user.del_prod_in_cart(selected_ID):
-                view_cart_redirect(user)
-        elif selected_ID == str:
-            print_invalid_choice()
-        else:
-            view_categ_redirect(user)
-
-
-# View Products
-def view_products_redirect(user):
-    if product_list := user.view_all_products():
-        selection = int(input("Enter Product ID to to add it to your cart, \n\t\t\t\tOR\n"
-                              "Enter 0 to return to the Categories Menu: "))
-        if selection != 0:
-            quantity = int(input("Enter the quantity: "))
-            product = Products(product_list)
-            product.find_selected_product(selection)
-            user.add_to_cart(selection, quantity)
-            view_cart_redirect(user)
-        else:
-            view_categ_redirect(user)
 
 if __name__ == "__main__":
     main()

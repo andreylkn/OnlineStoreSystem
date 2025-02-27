@@ -1,5 +1,6 @@
 from models.user.user import User
 
+
 class Admin(User):
     def __init__(self, user_id, username):
         super().__init__(user_id, username)
@@ -75,6 +76,7 @@ class Admin(User):
         else:
             print("Product not found.")
 
-    def view_products_by_category(self):
+
+"""    def view_products_by_category(self):
         category_id = input("Enter category ID: ")
-        super().view_products_by_category(category_id)
+        super().view_products_by_category(category_id)"""

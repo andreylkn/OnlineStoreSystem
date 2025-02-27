@@ -21,10 +21,15 @@ def print_admin_menu():
 
 def print_customer_menu():
     print("\n------------------- Customer Menu ----------------------")
-    print("1. View Categories")
-    print("2. View Products")
-    print("3. View Shopping Cart")
-    print("4. Logout")
+    print("1. View Category")
+    print("2. View All Products")
+    print("3. View Product by Category")
+    print("4. View Shopping Cart")
+    print("5. Add Product in Cart")
+    print("6. Delete Products from the Shopping Cart")
+    print("7. Make a Purchase")
+    print("8. Get Discounted Total")
+    print("0. Logout")
 
 
 def print_categories_menu():

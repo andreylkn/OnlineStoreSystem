@@ -1,7 +1,8 @@
 from prettytable import PrettyTable
-
+from utils.print_utils import print_products_menu
 from managers.base_manager import BaseManager
-from dbm import sqlite3
+import sqlite3
+
 
 class ProductManager(BaseManager):
     def add_product(self, category_id, name, price, description, discount):
@@ -57,6 +58,7 @@ class ProductManager(BaseManager):
         if products := self.get_products_by_category(category_id):
             for product in products:
                 table.add_row(product)
+            print_products_menu()
             print(table)
         else:
             print("No products available.")
