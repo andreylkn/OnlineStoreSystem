@@ -1,5 +1,4 @@
 from models.user.user import User
-from services.database import DatabaseService
 from utils.print_utils import print_cart_menu, print_products_menu, print_categories_menu
 
 
@@ -31,7 +30,7 @@ class Customer(User):
     # Delete selected cart_id from the shopping cart
     def del_prod_in_cart(self):
         cart_id = input("Enter Cart ID to remove the product from your cart: ")
-        return self._cart_manager.del_cart_item(cart_id)
+        return self._cart_manager.del_cart_item(self.id, cart_id)
 
     # To make a purchase (Everything in Carts)
     def make_purchase(self):

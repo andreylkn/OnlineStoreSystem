@@ -30,7 +30,6 @@ def print_customer_menu():
     print("5. Add Product in Cart")
     print("6. Delete Products from the Shopping Cart")
     print("7. Make a Purchase")
-    print("8. Get Discounted Total")
     print("0. Logout")
 
 

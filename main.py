@@ -75,11 +75,9 @@ def customer_menu(user):
         user.del_prod_in_cart()  # Delete products from the shopping cart
     elif choice == '7':
         user.make_purchase()  # Make a Purchase
-    elif choice == '8':
-        print("Not Ready")  # Apply Discount and Calculate total cost2
     elif choice == "0":
-        return None
         print("Logging out...")
+        return None
     else:
         print_invalid_choice()
     return user

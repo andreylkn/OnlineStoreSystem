@@ -10,6 +10,7 @@ from utils.input_validation import input_bool
 TABLE_HEADERS = ["Cart Item ID", "Product", "Quantity",
                  "Unit Price", "Discount", "Effective Unit Price", "Subtotal"]
 
+
 class CartManager(BaseManager):
 
     def get_cart_items(self, user_id):
@@ -31,7 +32,7 @@ class CartManager(BaseManager):
                 effective_price = calculate_effective_price(item[PRICE], item[DISCOUNT])
                 item_total = calculate_total_item_price(effective_price, item[QUANTITY])
                 total += item_total
-                table.add_row([item["id"], item["name"], item[QUANTITY], item[PRICE], item[DISCOUNT], effective_price, item_total])
+                table.add_row([item["id"], item["name"], item[QUANTITY], item[PRICE], item[DISCOUNT], "{:.2f}".format(effective_price), "{:.2f}".format(item_total)])
             print(table)
             print(f"Total Price: {total:.2f}")
         else:
@@ -49,9 +50,14 @@ class CartManager(BaseManager):
         except sqlite3.IntegrityError:
             return False
 
-    def del_cart_item(self, cart_id):
+    def del_cart_item(self, user_id, cart_id):
         try:
-            self._db.connection.execute("DELETE FROM shopping_cart WHERE id = ?", (cart_id,))
+            cursor = self._db.connection.cursor()
+            cursor.execute("SELECT 1 FROM shopping_cart WHERE id = ? AND user_id = ?", (cart_id, user_id))
+            if cursor.fetchone() is None:
+                print(f"Cart ID {cart_id} does not exist in the your Cart.")
+                return False
+            self._db.connection.execute("DELETE FROM shopping_cart WHERE id = ? AND user_id = ?", (cart_id, user_id))
             self._db.connection.commit()
             print(f"Deleted Cart ID {cart_id} successfully!")
         except sqlite3.IntegrityError:

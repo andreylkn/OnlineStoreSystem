@@ -34,7 +34,7 @@ class SaleReportManager(BaseManager):
                 line_total = calculate_total_item_price(row[QUANTITY], row[EFFECTIVE_PRICE])
                 total_sales += line_total
                 table.add_row([row["id"], row["user_id"], row["product_id"], row[QUANTITY],
-                               row[EFFECTIVE_PRICE], row[SALE_DATE], f"{line_total:.2f}"])
+                               round(row[EFFECTIVE_PRICE],2), row[SALE_DATE], f"{line_total:.2f}"])
 
             print("\n--------------------- Sales Report ---------------------")
             print(table)
