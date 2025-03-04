@@ -18,6 +18,8 @@ def print_admin_menu():
     print("9. View Products by Category")
     print("10. Print Sales Report")
     print("11. Export Sales Report to PDF")
+    print("12. Show Customers with a Community Discount")
+    print("13. Cancel Community Support Discount for a Customer")
     print("0. Logout")
 
 

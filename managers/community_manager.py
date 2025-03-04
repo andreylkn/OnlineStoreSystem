@@ -24,3 +24,22 @@ class CommunityManager(BaseManager):
         communities = self.get_communities()
         for comm in communities:
             print(f"ID: {comm['id']}, Name: {comm['name']}")
+
+    def get_users_with_community_discount(self):
+        cursor = self._db.connection.cursor()
+        cursor.execute("SELECT id, username, community_id FROM users WHERE community_id IS NOT NULL")
+        return cursor.fetchall()
+
+    def show_users_with_community_discount(self):
+        customers = self.get_users_with_community_discount()
+        if not customers:
+            print("No customers with community discount found.")
+            return
+        for cust in customers:
+            print(f"ID: {cust['id']}, Username: {cust['username']}, Community ID: {cust['community_id']}")
+
+    def cancel_community_discount(self, user_id):
+        cursor = self._db.connection.cursor()
+        cursor.execute("UPDATE users SET community_id = NULL WHERE id = ?", (user_id,))
+        self._db.connection.commit()
+        print("Community discount cancelled for the customer.")

@@ -83,3 +83,10 @@ class Admin(User):
 
     def export_sales_report(self):
         self._sale_report_manager.export_report()
+
+    def show_customer_with_community_discount(self):
+        self._community_manager.show_users_with_community_discount()
+
+    def cancel_community_discount_to_customer(self):
+        user_id = input("Enter the customer ID to cancel community discount: ")
+        self._community_manager.cancel_community_discount(user_id)

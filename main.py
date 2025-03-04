@@ -51,6 +51,10 @@ def admin_menu(user):
         user.print_sales_report()
     elif choice == "11":
         user.export_sales_report()
+    elif choice == "12":
+        user.show_customer_with_community_discount()
+    elif choice == "13":
+        user.cancel_community_discount_to_customer()
     elif choice == "0":
         print("Logging out...")
         return None

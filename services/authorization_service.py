@@ -35,7 +35,7 @@ class AuthorizationService:
         is_admin = input_bool("Are you an admin?: ")
         role = ADMIN_ROLE if is_admin is True else CUSTOMER_ROLE
 
-        community_id = -1
+        community_id = None
         if role == CUSTOMER_ROLE:
             print("\nDo you belong to any of the following communities?")
             self.community_manager.show_communities()
@@ -51,7 +51,7 @@ class AuthorizationService:
         self.__register(username, password, role, community_id)
 
 
-    def __register(self, username, password, role=CUSTOMER_ROLE, community_id=-1):
+    def __register(self, username, password, role=CUSTOMER_ROLE, community_id=None):
         # Hash password
         hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         try:

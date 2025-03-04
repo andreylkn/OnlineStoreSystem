@@ -1,4 +1,5 @@
 from managers.category_manager import CategoryManager
+from managers.community_manager import CommunityManager
 from managers.product_manager import ProductManager
 from managers.cart_manager import CartManager
 
@@ -10,6 +11,7 @@ class User:
         self._category_manager = CategoryManager()
         self._product_manager = ProductManager()
         self._cart_manager = CartManager()
+        self._community_manager = CommunityManager()
 
     @property
     def id(self):

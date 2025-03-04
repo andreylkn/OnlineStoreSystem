@@ -15,7 +15,7 @@ TABLE_HEADERS = ["Cart Item ID", "Product", "Quantity",
 class CartManager(BaseManager):
     def __init__(self):
         super().__init__()
-        self.community_manager = CommunityManager()
+        self._community_manager = CommunityManager()
 
     def get_cart_items(self, user_id):
         cursor = self._db.connection.cursor()
@@ -29,7 +29,7 @@ class CartManager(BaseManager):
 
     def show_cart_items(self, user_id):
         if items := self.get_cart_items(user_id):
-            community_discount = self.community_manager.get_community_discount(user_id)
+            community_discount = self._community_manager.get_community_discount(user_id)
             total = 0
             table = PrettyTable()
             table.field_names = TABLE_HEADERS
@@ -95,7 +95,7 @@ class CartManager(BaseManager):
         if not items:
             print("Your cart is empty.")
         else:
-            community_discount = self.community_manager.get_community_discount(user_id)
+            community_discount = self._community_manager.get_community_discount(user_id)
             total = self.get_total_purchase_amount(items, community_discount)
             print(f"Total purchase amount: {total:.2f}")
 
