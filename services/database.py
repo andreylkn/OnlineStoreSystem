@@ -45,13 +45,13 @@ class DatabaseService:
 
     def _initialize_tables(self):
         self._create_tables()
-        if self._is_empty():
-            self._seed_test_data()
+        self._seed_test_data()
         self._connection.commit()
 
     def _create_tables(self):
         cursor = self._connection.cursor()
         self._create_users_table(cursor)
+        self._create_communities_table(cursor)
         self._create_categories_table(cursor)
         self._create_products_table(cursor)
         self._create_shopping_cart_table(cursor)
@@ -63,9 +63,20 @@ class DatabaseService:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT UNIQUE,
                 password TEXT,
+                community_id INTEGER,
                 role INTEGER
             )
         """)
+
+    # Communities table: list of supported communities and their discount value
+    def _create_communities_table(self, cursor):
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS communities (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT UNIQUE,
+                discount REAL
+            )
+        ''')
 
     def _create_categories_table(self, cursor):
         cursor.execute("""
@@ -76,6 +87,7 @@ class DatabaseService:
             )
         """)
 
+    # Products table: discount stored as percentage (e.g., 10 for 10% off)
     def _create_products_table(self, cursor):
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS products (
@@ -115,17 +127,32 @@ class DatabaseService:
             )
         """)
 
-    def _is_empty(self):
+    def _is_categories_empty(self, cursor):
         """Checks if the categories table is empty."""
-        cursor = self._connection.cursor()
         cursor.execute("SELECT COUNT(*) FROM categories")
+        count = cursor.fetchone()[0]
+        return count == 0
+
+    def _is_products_empty(self, cursor):
+        """Checks if the products table is empty."""
+        cursor.execute("SELECT COUNT(*) FROM products")
+        count = cursor.fetchone()[0]
+        return count == 0
+
+    def _is_communities_empty(self, cursor):
+        """Checks if the products table is empty."""
+        cursor.execute("SELECT COUNT(*) FROM communities")
         count = cursor.fetchone()[0]
         return count == 0
 
     def _seed_test_data(self):
         cursor = self._connection.cursor()
-        self._seed_categories_data(cursor)
-        self._seed_products_data(cursor)
+        if self._is_categories_empty(cursor):
+            self._seed_categories_data(cursor)
+        if self._is_products_empty(cursor):
+            self._seed_products_data(cursor)
+        if self._is_communities_empty(cursor):
+            self._seed_communities_data(cursor)
 
     def _seed_categories_data(self, cursor):
         # Insert test categories
@@ -167,4 +194,19 @@ class DatabaseService:
                     "INSERT INTO products (category_id, name, price, description, discount) VALUES (?, ?, ?, ?, ?)",
                     (category_id, prod[NAME], prod[PRICE], prod[DESCRIPTION], prod[DISCOUNT])
                 )
+        self._connection.commit()
+
+    def _seed_communities_data(self, cursor):
+        """Seed the communities table with supported communities."""
+        # Test data
+        communities = [
+            {'name': 'Students', 'discount': 10.0},
+            {'name': 'Maori', 'discount': 5.0}
+        ]
+
+        for community in communities:
+            cursor.execute(
+                "INSERT INTO communities (name, discount) VALUES (?, ?)",
+                (community['name'], community['discount'])
+            )
         self._connection.commit()

@@ -1,3 +1,4 @@
+from managers.community_manager import CommunityManager
 from models.user.admin import Admin
 from models.user.customer import Customer
 from services.database import ROLE, USER_ID, USERNAME, PASSWORD, DatabaseService
@@ -10,6 +11,8 @@ CUSTOMER_ROLE = 2 #customer
 class AuthorizationService:
     def __init__(self):
         self._db = DatabaseService()
+        self.community_manager = CommunityManager()
+
 
     def authenticate(self):
         username = input("Username: ")
@@ -24,29 +27,43 @@ class AuthorizationService:
         else:
             return Customer(user_data[USER_ID], user_data[USERNAME])
 
+
     def register_user(self):
         username = input("Choose a username: ")
         password = input("Choose a password: ")
 
         is_admin = input_bool("Are you an admin?: ")
-        role = ADMIN_ROLE if is_admin == True else CUSTOMER_ROLE
-        if self.__register(username, password, role):
-            print("User registered successfully.")
-        else:
-            print("Registration failed. Username might be taken.")
+        role = ADMIN_ROLE if is_admin is True else CUSTOMER_ROLE
 
-    def __register(self, username, password, role=CUSTOMER_ROLE):
+        community_id = -1
+        if role == CUSTOMER_ROLE:
+            print("\nDo you belong to any of the following communities?")
+            self.community_manager.show_communities()
+            if input_bool(""):
+                selected_community = int(input("Enter the community ID: "))
+                communities = self.community_manager.get_communities()
+
+                # Verify selected community exists
+                if selected_community and any(comm['id'] == selected_community for comm in communities):
+                    community_id = selected_community
+                else:
+                    print("Invalid community ID. No discount will be applied.")
+        self.__register(username, password, role, community_id)
+
+
+    def __register(self, username, password, role=CUSTOMER_ROLE, community_id=-1):
         # Hash password
         hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         try:
             self._db.connection.execute(
-                "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
-                (username, hashed_pw.decode('utf-8'), role)
+                "INSERT INTO users (username, password, role, community_id) VALUES (?, ?, ?, ?)",
+                (username, hashed_pw.decode('utf-8'), role, community_id)
             )
             self._db.connection.commit()
             return True
         except:
             return False
+
 
     def __login(self, username, password):
         cursor = self._db.connection.cursor()

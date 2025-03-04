@@ -3,6 +3,7 @@ import sqlite3
 from prettytable import PrettyTable
 from datetime import datetime
 
+from managers.community_manager import CommunityManager
 from services.database import DISCOUNT, PRICE, QUANTITY
 from utils.calculation_utils import calculate_effective_price, calculate_total_item_price
 from utils.input_validation import input_bool
@@ -12,6 +13,9 @@ TABLE_HEADERS = ["Cart Item ID", "Product", "Quantity",
 
 
 class CartManager(BaseManager):
+    def __init__(self):
+        super().__init__()
+        self.community_manager = CommunityManager()
 
     def get_cart_items(self, user_id):
         cursor = self._db.connection.cursor()
@@ -25,15 +29,18 @@ class CartManager(BaseManager):
 
     def show_cart_items(self, user_id):
         if items := self.get_cart_items(user_id):
+            community_discount = self.community_manager.get_community_discount(user_id)
             total = 0
             table = PrettyTable()
             table.field_names = TABLE_HEADERS
             for item in items:
-                effective_price = calculate_effective_price(item[PRICE], item[DISCOUNT])
+                effective_price = calculate_effective_price(item[PRICE], item[DISCOUNT], community_discount)
                 item_total = calculate_total_item_price(effective_price, item[QUANTITY])
                 total += item_total
                 table.add_row([item["id"], item["name"], item[QUANTITY], item[PRICE], item[DISCOUNT], "{:.2f}".format(effective_price), "{:.2f}".format(item_total)])
             print(table)
+            if community_discount != 0:
+                print(f"Community Discount: {community_discount}%")
             print(f"Total Price: {total:.2f}")
         else:
             print("Your cart is empty.")
@@ -76,12 +83,11 @@ class CartManager(BaseManager):
         )
         self._db.connection.commit()
 
-    def get_total_purchase_amount(self, items):
+    def get_total_purchase_amount(self, items, community_discount):
         total = 0
         for item in items:
-            effective_price = calculate_effective_price(item[PRICE], item[DISCOUNT])
+            effective_price = calculate_effective_price(item[PRICE], item[DISCOUNT], community_discount)
             total += calculate_total_item_price(effective_price, item[QUANTITY])
-
         return total
 
     def make_purchase(self, user_id):
@@ -89,12 +95,13 @@ class CartManager(BaseManager):
         if not items:
             print("Your cart is empty.")
         else:
-            total = self.get_total_purchase_amount(items)
+            community_discount = self.community_manager.get_community_discount(user_id)
+            total = self.get_total_purchase_amount(items, community_discount)
             print(f"Total purchase amount: {total:.2f}")
 
             if input_bool("Do you want to proceed with purchase?: "):
                 for item in items:
-                    effective_price = calculate_effective_price(item[PRICE], item[DISCOUNT])
+                    effective_price = calculate_effective_price(item[PRICE], item[DISCOUNT], community_discount)
                     sale_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     self.add_sale(user_id, item['product_id'], item[QUANTITY], effective_price, sale_date)
                 self.clear_cart(user_id)
