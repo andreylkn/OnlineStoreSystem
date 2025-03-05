@@ -16,6 +16,8 @@ def main():
                 auth_service.register_user()
             elif choice == '2':
                 current_user = auth_service.authenticate()
+                if current_user is not None:
+                    print(f"Login successful. Welcome, {current_user.username}!")
             elif choice == '3':
                 print("Goodbye!")
                 break

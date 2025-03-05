@@ -14,12 +14,10 @@ CATEGORY = 'category'
 PRICE = 'price'
 DISCOUNT = 'discount'
 
-# Constants for the shopping cart table
 QUANTITY = 'quantity'
 EFFECTIVE_PRICE = 'effective_price'
-
-# Constants for the sale table
 SALE_DATE = 'sale_date'
+CONSENT = 'consent'
 
 class DatabaseService:
     _instance = None

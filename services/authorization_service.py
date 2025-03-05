@@ -1,9 +1,9 @@
 from managers.community_manager import CommunityManager
 from models.user.admin import Admin
 from models.user.customer import Customer
-from services.database import ROLE, USER_ID, USERNAME, PASSWORD, DatabaseService
+from services.database import ROLE, USER_ID, USERNAME, PASSWORD, DatabaseService, CONSENT
+from services.deterministic_encryptor import DeterministicEncryptor, ENCRYPTION_KEY
 from utils.input_validation import input_bool
-import bcrypt
 
 ADMIN_ROLE = 1 #admin
 CUSTOMER_ROLE = 2 #customer
@@ -12,7 +12,7 @@ class AuthorizationService:
     def __init__(self):
         self._db = DatabaseService()
         self.community_manager = CommunityManager()
-
+        self.encryptor = DeterministicEncryptor(ENCRYPTION_KEY)
 
     def authenticate(self):
         username = input("Username: ")
@@ -22,10 +22,11 @@ class AuthorizationService:
         if not user_data:
             print("Invalid credentials.")
             return None
+
         if user_data[ROLE] == ADMIN_ROLE:
-            return Admin(user_data[USER_ID], user_data[USERNAME])
+            return Admin(user_data[USER_ID], username)
         else:
-            return Customer(user_data[USER_ID], user_data[USERNAME], user_data['consent'])
+            return Customer(user_data[USER_ID], username, user_data[CONSENT])
 
 
     def register_user(self):
@@ -57,11 +58,12 @@ class AuthorizationService:
 
     def __register(self, username, password, role=CUSTOMER_ROLE, community_id=None, consent=False):
         # Hash password
-        hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        encrypted_password = self.encryptor.encrypt(password)
+        encrypted_username = self.encryptor.encrypt(username)
         try:
             self._db.connection.execute(
                 "INSERT INTO users (username, password, role, community_id, consent) VALUES (?, ?, ?, ?, ?)",
-                (username, hashed_pw.decode('utf-8'), role, community_id, consent)
+                (encrypted_username, encrypted_password, role, community_id, consent)
             )
             self._db.connection.commit()
             return True
@@ -71,8 +73,8 @@ class AuthorizationService:
 
     def __login(self, username, password):
         cursor = self._db.connection.cursor()
-        cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
-        user = cursor.fetchone()
-        if user and bcrypt.checkpw(password.encode('utf-8'), user[PASSWORD].encode('utf-8')):
-            return user
-        return None
+        encrypted_password = self.encryptor.encrypt(username)
+        encrypted_username = self.encryptor.encrypt(password)
+        cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?",
+                       (encrypted_password, encrypted_username))
+        return cursor.fetchone()
