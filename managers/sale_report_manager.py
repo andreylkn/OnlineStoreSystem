@@ -9,7 +9,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from services.database import QUANTITY, EFFECTIVE_PRICE, SALE_DATE
 from utils.calculation_utils import calculate_total_item_price
 
-TABLE_HEADERS = ["Sale ID", "User ID", "Product ID", "Quantity",
+TABLE_HEADERS = ["Sale ID", "Purchase ID", "Product ID", "Quantity",
                  "Effective Price", "Sale Date", "Line Total"]
 
 class SaleReportManager(BaseManager):
@@ -33,7 +33,7 @@ class SaleReportManager(BaseManager):
             for row in rows:
                 line_total = calculate_total_item_price(row[QUANTITY], row[EFFECTIVE_PRICE])
                 total_sales += line_total
-                table.add_row([row["id"], row["user_id"], row["product_id"], row[QUANTITY],
+                table.add_row([row["id"], row["purchase_id"], row["product_id"], row[QUANTITY],
                                round(row[EFFECTIVE_PRICE],2), row[SALE_DATE], f"{line_total:.2f}"])
 
             print("\n--------------------- Sales Report ---------------------")
@@ -90,7 +90,7 @@ class SaleReportManager(BaseManager):
                 total_sales += line_total
                 data.append([
                     row['id'],
-                    row['user_id'],
+                    row['purchase_id'],
                     row['product_id'],
                     row[QUANTITY],
                     f"{row[EFFECTIVE_PRICE]:.2f}",

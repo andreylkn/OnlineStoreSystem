@@ -1,5 +1,6 @@
 from managers.base_manager import BaseManager
 import sqlite3
+import uuid
 from prettytable import PrettyTable
 from datetime import datetime
 
@@ -75,11 +76,11 @@ class CartManager(BaseManager):
         cursor.execute("DELETE FROM shopping_cart WHERE user_id = ?", (user_id,))
         self._db.connection.commit()
 
-    def add_sale(self, user_id, product_id, quantity, effective_price, sale_date):
+    def add_sale(self, purchase_id, user_id, product_id, quantity, effective_price, sale_date):
         cursor = self._db.connection.cursor()
         cursor.execute(
-            "INSERT INTO sales (user_id, product_id, quantity, effective_price, sale_date) VALUES (?, ?, ?, ?, ?)",
-            (user_id, product_id, quantity, effective_price, sale_date)
+            "INSERT INTO sales (purchase_id, user_id, product_id, quantity, effective_price, sale_date) VALUES (?, ?, ?, ?, ?, ?)",
+            (purchase_id, user_id, product_id, quantity, effective_price, sale_date)
         )
         self._db.connection.commit()
 
@@ -90,7 +91,7 @@ class CartManager(BaseManager):
             total += calculate_total_item_price(effective_price, item[QUANTITY])
         return total
 
-    def make_purchase(self, user_id):
+    def make_purchase(self, user_id, is_store_data_allowed):
         items = self.get_cart_items(user_id)
         if not items:
             print("Your cart is empty.")
@@ -100,10 +101,12 @@ class CartManager(BaseManager):
             print(f"Total purchase amount: {total:.2f}")
 
             if input_bool("Do you want to proceed with purchase?: "):
+                purchase_id = str(uuid.uuid4())
+                saved_user_id = user_id if is_store_data_allowed else None
                 for item in items:
                     effective_price = calculate_effective_price(item[PRICE], item[DISCOUNT], community_discount)
                     sale_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    self.add_sale(user_id, item['product_id'], item[QUANTITY], effective_price, sale_date)
+                    self.add_sale(purchase_id, saved_user_id, item['product_id'], item[QUANTITY], effective_price, sale_date)
                 self.clear_cart(user_id)
                 print("Purchase successful. Your shopping cart is now empty.")
             else:

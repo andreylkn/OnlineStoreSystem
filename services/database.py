@@ -64,6 +64,7 @@ class DatabaseService:
                 username TEXT UNIQUE,
                 password TEXT,
                 community_id INTEGER,
+                consent INTEGER DEFAULT 0,
                 role INTEGER
             )
         """)
@@ -117,6 +118,7 @@ class DatabaseService:
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS sales (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                purchase_id TEXT,
                 user_id INTEGER,
                 product_id INTEGER,
                 quantity INTEGER,

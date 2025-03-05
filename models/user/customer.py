@@ -3,8 +3,9 @@ from utils.print_utils import print_cart_menu, print_products_menu, print_catego
 
 
 class Customer(User):
-    def __init__(self, user_id, username):
+    def __init__(self, user_id, username, is_store_data_allowed):
         super().__init__(user_id, username)
+        self.is_store_data_allowed = is_store_data_allowed
 
     # View list of categories
     def view_all_categories(self):
@@ -34,4 +35,4 @@ class Customer(User):
 
     # To make a purchase (Everything in Carts)
     def make_purchase(self):
-        self._cart_manager.make_purchase(self.id)
+        self._cart_manager.make_purchase(self.id, self.is_store_data_allowed)
