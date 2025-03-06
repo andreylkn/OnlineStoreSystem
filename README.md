@@ -9,11 +9,12 @@ The Online Store System is a command-line application developed in Python that a
 - **Product Management**: Add, update, and delete products, including setting discount values.
 - **Sales Management**: Print report, export sales report to PDF.
 - **View Data**: Display lists of all categories, all products, and products filtered by category.
+- **Community Management**: Display customers with a community discount and cancel community support discount for a customer.
 
 ### Customer Features
 - **Browsing**: View lists of categories, all products, and products by category.
 - **Shopping Cart**: Add products to the cart, view cart contents, delete products from the cart.
-- **Purchase**: Complete a purchase with price calculation, considering product discounts.
+- **Purchase**: Complete a purchase with price calculation, considering product discounts, and view purchase history.
 
 ## Project Structure
 ```online-store-system/
@@ -22,6 +23,7 @@ OnlineStoreSystem/
 │   ├── base_manager.py
 │   ├── cart_manager.py
 │   ├── category_manager.py
+│   ├── community_manager.py
 │   ├── product_manager.py
 │   └── sale_report_manager.py
 ├── models/
@@ -31,7 +33,8 @@ OnlineStoreSystem/
 │       └── user.py
 ├── services/
 │   ├── authorization_service.py
-│   └── database.py
+│   ├── database.py
+│   └── deterministic_encryptor.py
 ├── utils/
 │   ├── calculation_utils.py
 │   ├── input_validation.py
