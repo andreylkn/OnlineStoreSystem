@@ -5,12 +5,14 @@ from prettytable import PrettyTable
 from datetime import datetime
 
 from managers.community_manager import CommunityManager
-from services.database import DISCOUNT, PRICE, QUANTITY
+from services.database import DISCOUNT, PRICE, QUANTITY, EFFECTIVE_PRICE, SALE_DATE, PURCHASE_ID
 from utils.calculation_utils import calculate_effective_price, calculate_total_item_price
 from utils.input_validation import input_bool
 
 TABLE_HEADERS = ["Cart Item ID", "Product", "Quantity",
                  "Unit Price", "Discount", "Effective Unit Price", "Subtotal"]
+
+PURCHASE_HISTORY_TABLE_HEADERS = ["Purchase ID", "Product ID", "Quantity", "Effective Price", "Date"]
 
 
 class CartManager(BaseManager):
@@ -111,3 +113,24 @@ class CartManager(BaseManager):
                 print("Purchase successful. Your shopping cart is now empty.")
             else:
                 print("Purchase cancelled.")
+
+    def get_purchase_history(self, userID):
+        try:
+            cursor = self._db.connection.cursor()
+            cursor.execute(
+                "SELECT purchase_id, product_id, quantity, effective_price, sale_date FROM sales WHERE user_id = ?", (userID,))
+            purchase_history_list = cursor.fetchall()
+            if len(purchase_history_list) == 0:
+                print("There is no record of any purchase history.")
+            else:
+                table = PrettyTable()
+                table.field_names = PURCHASE_HISTORY_TABLE_HEADERS
+                for item in purchase_history_list:
+                    table.add_row([item[PURCHASE_ID], item["product_id"], item[QUANTITY], f"{item[EFFECTIVE_PRICE]:.2f}", item[SALE_DATE]])
+
+                print(table)
+        except sqlite3.IntegrityError:
+            return False
+
+
+

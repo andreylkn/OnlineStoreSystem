@@ -14,6 +14,7 @@ CATEGORY = 'category'
 PRICE = 'price'
 DISCOUNT = 'discount'
 
+PURCHASE_ID = 'purchase_id'
 QUANTITY = 'quantity'
 EFFECTIVE_PRICE = 'effective_price'
 SALE_DATE = 'sale_date'

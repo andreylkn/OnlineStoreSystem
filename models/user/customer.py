@@ -36,3 +36,7 @@ class Customer(User):
     # To make a purchase (Everything in Carts)
     def make_purchase(self):
         self._cart_manager.make_purchase(self.id, self.is_store_data_allowed)
+
+    # To view purchase history
+    def view_purchase_history(self):
+        self._cart_manager.get_purchase_history(self.id)

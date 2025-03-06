@@ -81,6 +81,8 @@ def customer_menu(user):
         user.del_prod_in_cart()  # Delete products from the shopping cart
     elif choice == '7':
         user.make_purchase()  # Make a Purchase
+    elif choice == '8':
+        user.view_purchase_history()  # Display Purchase History
     elif choice == "0":
         print("Logging out...")
         return None
