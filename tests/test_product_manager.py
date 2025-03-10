@@ -21,21 +21,21 @@ class TestProductManager(unittest.TestCase):
         result = self.product_manager.add_product(self.test_category_id, "TestProduct", 10.0, "Test product", 0.0)
         self.assertTrue(result)
         products = self.product_manager.get_products()
-        self.assertTrue(any(prod["name"] == "TestProduct" for prod in products))
+        self.assertTrue(any(prod["product_name"] == "TestProduct" for prod in products))
 
     def test_update_product(self):
         self.product_manager.add_product(self.test_category_id, "TestProduct", 10.0, "Test product", 0.0)
         products = self.product_manager.get_products()
-        product_id = products[0]["id"]
+        product_id = products[0]["product_id"]
         rows_updated = self.product_manager.update_product(product_id, self.test_category_id, "UpdatedProduct", 20.0, "Updated desc", 5.0)
         self.assertEqual(rows_updated, 1)
         products = self.product_manager.get_products()
-        self.assertTrue(any(prod["name"] == "UpdatedProduct" for prod in products))
+        self.assertTrue(any(prod["product_name"] == "UpdatedProduct" for prod in products))
 
     def test_delete_product(self):
         self.product_manager.add_product(self.test_category_id, "TestProduct", 10.0, "Test product", 0.0)
         products = self.product_manager.get_products()
-        product_id = products[0]["id"]
+        product_id = products[0]["product_id"]
         rows_deleted = self.product_manager.delete_product(product_id)
         self.assertEqual(rows_deleted, 1)
 

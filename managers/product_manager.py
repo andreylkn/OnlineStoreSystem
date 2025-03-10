@@ -3,7 +3,7 @@ from utils.print_utils import print_products_menu
 from managers.base_manager import BaseManager
 import sqlite3
 
-TABLE_HEADERS = ["Product ID", "Category ID", "Name", "Price", "Description", "Discount"]
+TABLE_HEADERS = ["Product ID", "Category Name", "Product Name", "Price", "Description", "Discount"]
 
 class ProductManager(BaseManager):
     def add_product(self, category_id, name, price, description, discount):
@@ -34,7 +34,18 @@ class ProductManager(BaseManager):
 
     def get_products(self):
         cursor = self._db.connection.cursor()
-        cursor.execute("SELECT * FROM products")
+        cursor.execute("""
+            SELECT 
+                p.id AS product_id,
+                p.name AS product_name,
+                p.price,
+                p.description,
+                p.Discount,
+                c.id AS category_id,
+                c.name AS category_name
+            FROM products p
+            JOIN categories c ON p.category_id = c.id
+        """)
         return cursor.fetchall()
 
     def show_products(self):
@@ -42,7 +53,8 @@ class ProductManager(BaseManager):
         table.field_names = TABLE_HEADERS
         if products := self.get_products():
             for product in products:
-                table.add_row(product)
+                table.add_row([product["product_id"], product["category_name"], product["product_name"],
+                               product["price"], product["description"], product["discount"]])
             print(table)
         else:
             print("No products available.")
@@ -50,7 +62,19 @@ class ProductManager(BaseManager):
 
     def get_products_by_category(self, category_id):
         cursor = self._db.connection.cursor()
-        cursor.execute("SELECT * FROM products WHERE category_id = ?", (category_id,))
+        cursor.execute("""
+            SELECT 
+                p.id AS product_id,
+                p.name AS product_name,
+                p.price,
+                p.description,
+                p.Discount,
+                c.id AS category_id,
+                c.name AS category_name
+            FROM products p
+            JOIN categories c ON p.category_id = c.id
+            WHERE category_id = ?
+        """, (category_id,))
         return cursor.fetchall()
 
     def show_products_by_category(self, category_id):
@@ -58,7 +82,8 @@ class ProductManager(BaseManager):
         table.field_names = TABLE_HEADERS
         if products := self.get_products_by_category(category_id):
             for product in products:
-                table.add_row(product)
+                table.add_row([product["product_id"], product["category_name"], product["product_name"],
+                               product["price"], product["description"], product["discount"]])
             print_products_menu()
             print(table)
         else:
