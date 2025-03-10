@@ -8,7 +8,7 @@ from utils.input_validation import input_bool
 ADMIN_ROLE = 1 #admin
 CUSTOMER_ROLE = 2 #customer
 
-class AuthorizationService:
+class AuthorizationManager:
     def __init__(self):
         self._db = DatabaseService()
         self.community_manager = CommunityManager()

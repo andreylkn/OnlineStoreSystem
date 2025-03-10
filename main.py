@@ -1,11 +1,11 @@
 from models.user.admin import Admin
 from models.user.customer import Customer
-from services.authorization_service import AuthorizationService
+from managers.authorization_manager import AuthorizationManager
 from utils.print_utils import print_guest_menu, print_invalid_choice, print_admin_menu, print_customer_menu
 
 
 def main():
-    auth_service = AuthorizationService()
+    auth_service = AuthorizationManager()
     current_user = None
 
     while True:
