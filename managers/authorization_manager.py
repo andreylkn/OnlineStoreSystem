@@ -66,6 +66,7 @@ class AuthorizationManager:
                 (encrypted_username, encrypted_password, role, community_id, consent)
             )
             self._db.connection.commit()
+            print("Registration Successful!")
             return True
         except:
             return False

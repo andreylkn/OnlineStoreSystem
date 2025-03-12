@@ -50,12 +50,18 @@ class CartManager(BaseManager):
 
     def add_to_cart(self, user_id, product_id, quantity):
         try:
-            self._db.connection.execute(
-                "INSERT INTO shopping_cart (id, user_id, product_id, quantity) VALUES (?, ?, ?, ?)",
-                (None, user_id, product_id, quantity)
-            )
-            self._db.connection.commit()
-            print("Added to cart successfully!")
+            cursor = self._db.connection.cursor()
+            cursor.execute("SELECT * FROM products WHERE id = ?", (product_id,))
+
+            if cursor.fetchone():
+                self._db.connection.execute(
+                    "INSERT INTO shopping_cart (id, user_id, product_id, quantity) VALUES (?, ?, ?, ?)",
+                    (None, user_id, product_id, quantity)
+                )
+                self._db.connection.commit()
+                print("Added to cart successfully!")
+            else:
+                print("Invalid product ID.")
             return True
         except sqlite3.IntegrityError:
             return False
