@@ -31,7 +31,14 @@ class AuthorizationManager:
 
     def register_user(self):
         username = input("Choose a username: ")
+        if not username:
+            print("Error: Username cannot be empty. Registration aborted.")
+            return None
+
         password = input("Choose a password: ")
+        if not password:
+            print("Error: Password cannot be empty. Registration aborted.")
+            return None
 
         is_admin = input_bool("Are you an admin?: ")
         role = ADMIN_ROLE if is_admin is True else CUSTOMER_ROLE
@@ -69,6 +76,7 @@ class AuthorizationManager:
             print("Registration Successful!")
             return True
         except:
+            print("Registration Failed.")
             return False
 
 
